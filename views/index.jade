@@ -1,0 +1,22 @@
+extends layout
+
+block content
+  h1= title
+  //p  #{title}
+  #chatroom
+  ul.users
+    //  - each user in users
+    //    li.user= user
+  script(text="text/javascript", src="/socket.io/socket.io.js")
+  script(text="text/javascript")
+    var socket = io.connect("http://localhost:3000");
+    socket.on("newuser", function(data) {
+      console.log(data);
+    });
+    socket.on("updateusers", function(data) {
+      $('ul.users li').remove();
+      console.log('data', data);
+      for(var i=0; i < data.length; i++) {
+        $('ul.users').append("<li class='user'>" + data[i] + "</li>");
+      }
+    });
