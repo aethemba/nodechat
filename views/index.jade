@@ -9,20 +9,25 @@ block content
     br
     br
   .container
-    h3 Users currently online
-    #chatroom
-      .chat-window
-        ul.messages(data-bind-"":)
-            li(data-bind="text: msg")
+    .row
+      .span8
+        .well.sub-container
+          h3 Latest messages
+          textarea.messages
+          .input-container
+            p Leave a comment!
+              p
+                span.nickname.margin-right(data-bind="text: name")
+                input#comment(data-bind="")
+      .span4
+        .well.sub-container
+          .user-container 
+            h3 Users online
+            ul.noindent.users(data-bind="foreach: $root.users")
+              li(data-bind="text: userid")
 
-      .user-container
-        ul.users(data-bind="foreach: $root.users")
-          li(data-bind="text: userid")
-    .input-container
-      p Leave a comment!
-        p
-          span.nickname.margin-right(data-bind="text: name")
-          input#comment(data-bind="")
+      .span4
+
 
 
 
@@ -41,7 +46,6 @@ block content
     });
 
     //End Socket.io code
-
 
     //Knockout model and binding
     function ChatSessionViewModel() {
