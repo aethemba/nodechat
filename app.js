@@ -5,7 +5,7 @@
 
 var app = require('express')()
   , server = require('http').createServer(app)
-  , routes = require('./routes')
+  , routes = require('./routes')({'app': app})
   , user = require('./routes/user')
   , path = require('path')
   , express = require('express')
@@ -33,17 +33,21 @@ app.configure('development', function(){
 app.get('/', routes.index);
 app.get('/users', user.list);
 
-var users = []
+var users = [];
 
 io.sockets.on("connection", function(socket) {
-  if(users.indexOf(socket.id) == -1) {
-    users.push(socket.id);
+  var user_id = Math.random();
+  var sid = socket.id;
+  if(users.indexOf(sid) == -1) {
+    users.push({userid:sid});
   }
-  socket.emit("newuser", {user: "user" + socket.id});
+  socket.emit("newuser", {user: user_id});
   socket.emit("updateusers", users);
 
   socket.on("disconnect", function() {
-    console.log("disconnected user " + socket.id);
+    console.log("disconnected user " + sid);
+    var el = users.indexOf(sid);
+    if(el!=-1) users.splice(el, 1);
   });
 });
 

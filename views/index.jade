@@ -1,22 +1,66 @@
 extends layout
 
 block content
-  h1= title
-  //p  #{title}
-  #chatroom
-  ul.users
-    //  - each user in users
-    //    li.user= user
+  .container
+    h3= title
+    p
+      span.name.margin-right Enter your name
+      input#name(data-bind="value: name")
+    br
+    br
+  .container
+    h3 Users currently online
+    #chatroom
+      .chat-window
+        ul.messages(data-bind-"":)
+            li(data-bind="text: msg")
+
+      .user-container
+        ul.users(data-bind="foreach: $root.users")
+          li(data-bind="text: userid")
+    .input-container
+      p Leave a comment!
+        p
+          span.nickname.margin-right(data-bind="text: name")
+          input#comment(data-bind="")
+
+
+
+  #client-javascript
+  //Load Socket.io library
   script(text="text/javascript", src="/socket.io/socket.io.js")
+
+  //Socket.io relevant code
   script(text="text/javascript")
     var socket = io.connect("http://localhost:3000");
     socket.on("newuser", function(data) {
       console.log(data);
     });
     socket.on("updateusers", function(data) {
-      $('ul.users li').remove();
-      console.log('data', data);
-      for(var i=0; i < data.length; i++) {
-        $('ul.users').append("<li class='user'>" + data[i] + "</li>");
-      }
+        chatsession.update_users(data);
     });
+
+    //End Socket.io code
+
+
+    //Knockout model and binding
+    function ChatSessionViewModel() {
+        var self = this;
+        //Chat data
+        self.name = ko.observable();
+        self.input_user = ko.observable();
+        self.users = ko.observableArray([]);
+
+        //Chat behaviours
+        self.update_users = function(users) {
+          console.log("Self users", users);
+          for(var i=0; i<users.length;i++) {
+            if(self.users.indexOf(users[i]) == -1) {
+                self.users.push(users[i]);
+            }
+          }
+        };
+    }
+
+    var chatsession = new ChatSessionViewModel();
+    ko.applyBindings(chatsession);

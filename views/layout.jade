@@ -1,8 +1,33 @@
 doctype 5
-html
+html(lang="en")
   head
     title= title
     link(rel='stylesheet', href='/stylesheets/style.css')
-    script(text="text/javascript", src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js")
-  body
+    link(rel='stylesheet', href='/stylesheets/bootstrap.min.css')
+    link(rel='stylesheet', href='/stylesheets/bootstrap-responsive.css')
+    script(text="text/javascript", src='/javascripts/knockout-2.2.0.js')
+  body.preview
+    .navbar.navbar-fixed-top
+      .navbar-inner
+        .container
+          a.brand(href="/") Chat Server
+          #main-menu.nav-collapse
+            ul#main-menu-left.nav
+                li
+                  a Download source
+            ul#main-menu-right.nav.pull-right
+              li
+                a Built with Bootstrap
+              li
+                a Nothing here
+    .container
+      header#overview
+        .row
+          .span6
+            h1 Demo Chat Server in NodeJS
+            p and jQuery, KnockoutJS and Jade
     block content
+    .container
+      footer#footer
+        p Source code available in GitHub
+     script(text="text/javascript", src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js")
