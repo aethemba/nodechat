@@ -4,9 +4,15 @@ body {
 span.margin-right {
   margin-right: 10px;
 }
-textarea.messages {
+.messages {
+  background-color: #fff;
   height: 346px;
   width: 704px;
+  list-style: none;
+}
+.msg {
+  color: #000;
+  margin-left: 5px;
 }
 ul.users {
   list-style: none;
@@ -22,4 +28,7 @@ ul.users {
 ul.noindent {
   margin: 0;
   padding: 0;
+}
+span.name {
+  margin-right: 10px;
 }

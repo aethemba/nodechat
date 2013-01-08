@@ -13,23 +13,25 @@ block content
       .span8
         .well.sub-container
           h3 Latest messages
-          textarea.messages
+          .messages-container
+            ul.messages.noindent(data-bind="foreach: $root.msgs")
+              li.msg
+                span.name(data-bind="text: name")
+                span(data-bind="text: msg")
+            ul.
           .input-container
             p Leave a comment!
               p
                 span.nickname.margin-right(data-bind="text: name")
-                input#comment(data-bind="")
+                input#comment
       .span4
         .well.sub-container
           .user-container 
             h3 Users online
             ul.noindent.users(data-bind="foreach: $root.users")
-              li(data-bind="text: userid")
+              li(data-bind="text: nickname")
 
       .span4
-
-
-
 
   #client-javascript
   //Load Socket.io library
@@ -37,12 +39,14 @@ block content
 
   //Socket.io relevant code
   script(text="text/javascript")
+    //Get settings file and update port accordingly
     var socket = io.connect("http://localhost:3000");
-    socket.on("newuser", function(data) {
-      console.log(data);
-    });
+
     socket.on("updateusers", function(data) {
         chatsession.update_users(data);
+    });
+    socket.on("msgupdated", function(data) {
+        chatsession.update_msgs(data);
     });
 
     //End Socket.io code
@@ -54,17 +58,30 @@ block content
         self.name = ko.observable();
         self.input_user = ko.observable();
         self.users = ko.observableArray([]);
+        self.msgs = ko.observableArray([]);
 
         //Chat behaviours
         self.update_users = function(users) {
-          console.log("Self users", users);
-          for(var i=0; i<users.length;i++) {
-            if(self.users.indexOf(users[i]) == -1) {
-                self.users.push(users[i]);
-            }
-          }
+            self.users(users);
         };
+        self.update_msgs = function(msgs) {
+            console.log(msgs);
+            self.msgs(msgs);
+        }
+
+        ko.computed(function() {
+          socket.emit("setnickname", self.name());
+        });
+
     }
 
     var chatsession = new ChatSessionViewModel();
     ko.applyBindings(chatsession);
+
+    $('input#comment').keydown(function(e) {
+        if (e.keyCode=='13') {
+            //Send msg
+            socket.emit("msg", $(this).val());
+            $(this).val("");
+        }
+    });
